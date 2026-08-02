@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="A calm Tiffany green Pomodoro timer for focused work and mindful breaks." />
+    <meta name="theme-color" content="#0abab5" />
+    <title>Tiffany Pomodoro</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="timer-card" aria-labelledby="app-title">
+        <p class="eyebrow">Focus gently</p>
+        <h1 id="app-title">Tiffany Pomodoro</h1>
+        <p class="subtitle">A clean timer for focused sessions, short pauses, and long resets.</p>
+
+        <div class="mode-tabs" role="tablist" aria-label="Timer modes">
+          <button class="mode active" type="button" data-mode="focus" role="tab" aria-selected="true">Focus</button>
+          <button class="mode" type="button" data-mode="short" role="tab" aria-selected="false">Short break</button>
+          <button class="mode" type="button" data-mode="long" role="tab" aria-selected="false">Long break</button>
+        </div>
+
+        <div class="timer-wrap" aria-live="polite">
+          <svg class="progress" viewBox="0 0 220 220" aria-hidden="true">
+            <circle class="track" cx="110" cy="110" r="96"></circle>
+            <circle class="meter" cx="110" cy="110" r="96"></circle>
+          </svg>
+          <div class="time-display">
+            <span id="time">25:00</span>
+            <small id="status">Ready to focus</small>
+          </div>
+        </div>
+
+        <div class="controls" aria-label="Timer controls">
+          <button id="start" class="primary" type="button">Start</button>
+          <button id="reset" type="button">Reset</button>
+        </div>
+
+        <form class="settings" aria-label="Timer length settings">
+          <label>
+            Focus
+            <input id="focus-min" type="number" min="1" max="120" value="25" />
+          </label>
+          <label>
+            Short
+            <input id="short-min" type="number" min="1" max="60" value="5" />
+          </label>
+          <label>
+            Long
+            <input id="long-min" type="number" min="1" max="90" value="15" />
+          </label>
+        </form>
+      </section>
+    </main>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>
