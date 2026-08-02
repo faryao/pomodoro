@@ -1,6 +1,6 @@
-# Tiffany Pomodoro
+# Pomodoro
 
-A static Pomodoro timer web app themed in Tiffany green.
+A static Pomodoro timer web app with a calm green theme.
 
 ## Pages URL
 
@@ -13,9 +13,5 @@ https://faryao.github.io/pomodoro/
 ## Files
 
 - `index.html` — app markup
-- `styles.css` — Tiffany green responsive design
+- `styles.css` — responsive green design
 - `app.js` — timer logic
-
-## Deploy
-
-Copy or publish this directory as the `/pomodoro` folder in the GitHub Pages source for `faryao.github.io`.

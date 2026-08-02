@@ -36,7 +36,7 @@ function formatTime(seconds) {
 
 function render() {
   timeEl.textContent = formatTime(remainingSeconds);
-  document.title = `${formatTime(remainingSeconds)} — Tiffany Pomodoro`;
+  document.title = `${formatTime(remainingSeconds)} — Pomodoro`;
 
   const elapsedRatio = totalSeconds ? 1 - remainingSeconds / totalSeconds : 0;
   meter.style.strokeDashoffset = String(circumference * elapsedRatio);
