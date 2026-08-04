@@ -1,0 +1,16 @@
+# Rust / Tauri build artifacts
+desktop/src-tauri/target/
+desktop/src-tauri/gen/
+
+# Native macOS menubar app build artifacts
+pomodoro-app/Pomodoro
+pomodoro-app/Pomodoro.app/
+pomodoro-app/AppIcon.iconset/
+pomodoro-app/favicon.svg.png
+
+# Superseded prototype (replaced by pomodoro-app/)
+menubar-timer/
+
+# Local tooling configuration
+.agents/
+.codebuddy/
