@@ -59,6 +59,8 @@ final class TimerModel: ObservableObject {
     @Published private(set) var remainingSeconds = 25 * 60
     @Published private(set) var isRunning = false
     @Published private(set) var status: String = "Ready to focus"
+    /// Focus sessions completed since the last long break — long breaks land on multiples of 4.
+    @Published private(set) var focusCycleCount = 0
 
     private var endAt: Date?
     private var timer: Timer?
@@ -129,20 +131,32 @@ final class TimerModel: ObservableObject {
         isRunning = false
         timer?.invalidate()
         timer = nil
-        let label = currentMode.label
-        status = "\(label) complete"
+        let finishedLabel = currentMode.label
         Chime.play()
-        notifyDone(label: label)
+
+        // Auto-select the next session without starting it.
+        switch currentMode {
+        case .focus:
+            focusCycleCount += 1
+            select(focusCycleCount.isMultiple(of: 4) ? .long : .short)
+        case .short, .long:
+            select(.focus)
+        }
+
+        notifyDone(finished: finishedLabel, nextMode: currentMode)
     }
 
-    private func notifyDone(label: String) {
+    private func notifyDone(finished label: String, nextMode: Mode) {
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.alert, .sound]) { granted, _ in
             guard granted else { return }
             let content = UNMutableNotificationContent()
             content.title = "Pomodoro"
-            content.body = "\(label) complete — time's up."
+            content.body = "\(label) complete. \(nextMode.readyStatus)."
             content.sound = .default
+            if let attachment = NotificationLogo.attachment() {
+                content.attachments = [attachment]
+            }
             let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
             UNUserNotificationCenter.current().add(request)
         }
@@ -185,6 +199,28 @@ enum Chime {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { engine.stop() }
         }
         player.play()
+    }
+}
+
+// MARK: - Notification logo
+
+enum NotificationLogo {
+    /// Attaches the app icon to a notification so the logo is visible in the banner.
+    /// macOS derives the banner icon from the app bundle, which can be stale or generic;
+    /// attaching the image guarantees the tomato logo always shows.
+    static func attachment() -> UNNotificationAttachment? {
+        guard let source = Bundle.main.url(forResource: "NotificationIcon", withExtension: "png") else {
+            return nil
+        }
+        let copy = FileManager.default.temporaryDirectory
+            .appendingPathComponent("NotificationIcon-\(UUID().uuidString).png")
+        do {
+            try FileManager.default.removeItem(at: copy)
+            try FileManager.default.copyItem(at: source, to: copy)
+            return try UNNotificationAttachment(identifier: "app-logo", url: copy, options: nil)
+        } catch {
+            return nil
+        }
     }
 }
 
@@ -434,6 +470,11 @@ struct MenuBarMenu: View {
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // Ensure the system associates the tomato icon with this app,
+        // which also keeps notification banners from falling back to a generic icon.
+        if let iconURL = Bundle.main.url(forResource: "AppIcon", withExtension: "icns") {
+            NSApplication.shared.applicationIconImage = NSImage(contentsOf: iconURL)
+        }
         MainWindowController.shared.show()
     }
 }
